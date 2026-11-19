@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Recruiting Process Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<script src="d3.min.js"></script>
+<style>
+:root {
+  --blue:#00558C; --green:#319B42; --gray:#474C55; --red:#B23A3A;
+  --blue10:#E6EEF4; --green10:#EAF5EC; --red10:#F7E9E9;
+  --bg:#F5F7FA; --panel:#FFFFFF; --line:#DDE3EA; --fg:#1F2933; --muted:#5F6B7A; --grid:#EEF1F5;
+  --radius:10px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin:0; background:var(--bg); color:var(--fg); font-family:'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size:15px; line-height:1.45; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 20px 20px 40px; }
+header.brand { display:flex; gap:12px; align-items:stretch; border-bottom:4px solid var(--blue); padding-bottom:12px; margin-bottom:16px; }
+header.brand .bar { width:7px; border-radius:3px; background:var(--green); }
+.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+h1 { font-family:'Source Serif 4', Georgia, serif; font-weight:600; font-size:30px; margin:2px 0 0; }
+.take { font-size:16px; margin:0 0 6px; max-width:80ch; }
+.sub { font-size:13px; color:var(--muted); margin:0 0 18px; }
+.num { font-variant-numeric: tabular-nums; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(165px, 1fr)); gap:12px; margin-bottom:18px; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; min-width:0; }
+.tile { border-top:4px solid var(--blue); }
+.tile.good { border-top-color:var(--green); } .tile.warn { border-top-color:var(--red); }
+.tile .label { font-size:13px; color:var(--muted); }
+.tile .big { font-family:'Source Serif 4', Georgia, serif; font-size:32px; line-height:1.15; font-variant-numeric:tabular-nums; }
+.tile .note { font-size:12.5px; color:var(--muted); margin-top:2px; }
+h3 { font-size:17px; margin:0 0 4px; }
+.desc { font-size:13px; color:var(--muted); margin:0 0 10px; }
+.sec { margin-bottom:18px; }
+.grid2 { display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr)); gap:12px; margin-bottom:18px; }
+.chart { position:relative; }
+.chart svg { display:block; width:100%; height:auto; }
+.chart text { font-size:12px; fill:var(--fg); font-family:inherit; }
+.axis text { fill:var(--muted); font-size:11px; }
+.axis line, .axis path { stroke:#C9D1DB; }
+.gridline { stroke:var(--grid); }
+.tip { position:absolute; pointer-events:none; background:#fff; border:1px solid var(--line); box-shadow:0 6px 18px rgba(16,24,40,.12); border-radius:8px; padding:7px 9px; font-size:12.5px; line-height:1.35; max-width:270px; z-index:5; }
+.tip .s { color:var(--muted); }
+.legend { display:flex; flex-wrap:wrap; gap:14px; font-size:12.5px; color:var(--muted); margin-top:6px; }
+.legend span::before { content:''; display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:-1px; background:var(--sw); }
+.tablewrap { overflow-x:auto; }
+.scroll { max-height:520px; overflow-y:auto; border:1px solid var(--line); border-radius:8px; }
+table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
+th { text-align:left; font-weight:600; color:var(--muted); border-bottom:1px solid var(--line); padding:7px 9px; white-space:nowrap; position:sticky; top:0; background:#F9FAFC; z-index:1; }
+td { border-bottom:1px solid var(--grid); padding:7px 9px; vertical-align:top; }
+tr:hover td { background:#FAFBFD; }
+.r { text-align:right; }
+.pill { display:inline-block; padding:1px 8px; border-radius:999px; font-size:11.5px; white-space:nowrap; border:1px solid currentColor; }
+.top { color:var(--green); } .mid { color:var(--blue); } .low { color:var(--red); } .muted { color:var(--muted); }
+.up { color:var(--green); } .down { color:var(--red); }
+details.notes summary { cursor:pointer; color:var(--blue); white-space:nowrap; }
+details.notes ul { margin:4px 0 0; padding-left:16px; min-width:220px; }
+details.notes li { margin:2px 0; }
+.search { font:inherit; font-size:14px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; width:min(320px, 100%); margin:0 0 10px; }
+details.fold > summary { list-style:none; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; }
+details.fold > summary::-webkit-details-marker { display:none; }
+details.fold > summary h3 { margin:0; }
+.hint { font-size:12.5px; color:var(--blue); border:1px solid var(--line); border-radius:999px; padding:2px 10px; white-space:nowrap; }
+details.fold[open] > summary { margin-bottom:10px; }
+details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-hide { display:none; }
+.tabs { display:flex; gap:10px; align-items:stretch; position:sticky; top:0; z-index:20; background:var(--bg); padding:10px 0; border-bottom:4px solid var(--blue); margin:22px 0 16px; }
+.tab { flex:1 1 0; font:inherit; font-size:18px; font-weight:700; padding:14px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); color:var(--fg); cursor:pointer; }
+.tab:hover { border-color:var(--blue); }
+.tab[aria-selected="true"] { background:var(--blue); color:#fff; border-color:var(--blue); }
+.tab small { display:block; font-size:12.5px; font-weight:400; opacity:.85; }
+.totop { align-self:center; white-space:nowrap; font-size:13px; color:var(--blue); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:var(--panel); }
+.panelhead { font-size:13px; color:var(--muted); margin:0 0 14px; max-width:90ch; }
+.foot { font-size:12.5px; color:var(--muted); border-top:1px solid var(--line); margin-top:24px; padding-top:10px; }
+.status { padding:40px; text-align:center; color:var(--muted); }
+@media (max-width:640px) { h1 { font-size:24px; } .tab { font-size:15px; padding:10px 8px; } .tile .big { font-size:26px; } }
+@media print { .tabs, .search { display:none; } .scroll { max-height:none; border:0; } th { position:static; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand" id="top">
+    <div class="bar"></div>
+    <div>
+      <div class="eyebrow">Globe Life Liberty National Division · The Whittingham Agencies</div>
+      <h1>Recruiting Process Dashboard</h1>
+    </div>
+  </header>
+
+  <div id="app"><div class="status">Loading the latest results…</div></div>
+
+  <p class="foot">Data from the CLB Review and Final Interview Review tools, refreshed daily at 7 AM, noon and 5 PM Central. <span id="built"></span> Powered by Whittingham Professional Training Services.</p>
+</div>
+
+<script>
+(function () {
+  const $ = (s, el = document) => el.querySelector(s);
+  const fmt = (v) => v == null || v === '' ? '—' : (typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : String(v));
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const tier = (r) => { r = String(r || '').toLowerCase(); return (r.startsWith('ready') || r.startsWith('strong')) ? 'top' : (r.startsWith('publish') || r.startsWith('good')) ? 'mid' : (r.startsWith('re-record') || r.startsWith('needs')) ? 'low' : 'muted'; };
+  const tierColor = (r) => ({ top: 'var(--green)', mid: 'var(--blue)', low: 'var(--red)', muted: '#9AA5B1' })[tier(r)];
+  const pill = (txt, cls) => txt ? `<span class="pill ${cls}">${esc(txt)}</span>` : '';
+  const signed = (v) => v == null ? '' : `<span class="${v > 0 ? 'up' : v < 0 ? 'down' : ''}">${v > 0 ? '+' : ''}${fmt(v)}</span>`;
+  const STRONG = 75, FIX = 60;
+  const notes = (r) => {
+    const list = String(r['Flag notes'] || '').split('; ').filter(Boolean);
+    if (!list.length) return '';
+    const comp = /^(Asked about|Candidate personal|Income guarantee|Pay or role|Described the role|Profanity|Automatic rule)/;
+    return `<details class="notes"><summary>${list.length} flag${list.length > 1 ? 's' : ''}</summary><ul>${list.map((n) => `<li class="${comp.test(n) ? 'low' : ''}">${esc(n)}</li>`).join('')}</ul></details>`;
+  };
+
+  function table(cols, rows, opts = {}) {
+    const head = cols.map((c) => `<th class="${c.num ? 'r' : ''}">${esc(c.h)}</th>`).join('');
+    const body = rows.map((r) => '<tr>' + cols.map((c) => {
+      const v = c.f ? c.f(r) : esc(fmt(r[c.k]));
+      return `<td class="${c.num ? 'r' : ''}">${v === '—' && !c.dash ? '' : v}</td>`;
+    }).join('') + '</tr>').join('');
+    return `<div class="tablewrap ${opts.scroll ? 'scroll' : ''}"><table><thead><tr>${head}</tr></thead><tbody>${body || `<tr><td colspan="${cols.length}" class="muted">Nothing yet.</td></tr>`}</tbody></table></div>`;
+  }
+  const tile = (label, big, note, cls = '') => `<div class="card tile ${cls}"><div class="label">${label}</div><div class="big">${big}</div>${note ? `<div class="note">${note}</div>` : ''}</div>`;
+
+  function tipper(el) {
+    const t = document.createElement('div'); t.className = 'tip'; t.hidden = true; el.appendChild(t);
+    return {
+      show(ev, title, lines) {
+        t.innerHTML = `<b>${esc(title)}</b>` + (lines || []).filter(Boolean).map((l) => `<div class="s">${esc(l)}</div>`).join('');
+        t.hidden = false;
+        const r = el.getBoundingClientRect();
+        let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+        if (x + t.offsetWidth > r.width) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
+        if (y + t.offsetHeight > r.height) y = Math.max(0, ev.clientY - r.top - t.offsetHeight - 12);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; },
+    };
+  }
+  function measure(svg, texts) {
+    const g = svg.append('g').attr('opacity', 0); let m = 0;
+    texts.forEach((s) => { m = Math.max(m, g.append('text').text(s).node().getComputedTextLength()); });
+    g.remove(); return m;
+  }
+  function fit(sel, max) {
+    sel.each(function () {
+      const full = this.textContent; let s = full;
+      while (s.length > 4 && this.getComputedTextLength() > max) { s = s.slice(0, -2); this.textContent = s + '…'; }
+      if (s !== full) d3.select(this).append('title').text(full);
+    });
+  }
+
+  // ---------- charts ----------
+  function hbar(el, rows, o) {
+    el.innerHTML = '';
+    if (!rows.length) { el.innerHTML = '<div class="muted">Nothing yet.</div>'; return; }
+    const W = Math.max(280, el.clientWidth), rowH = o.rowH || 22, top = o.refs ? 22 : 4, bottom = o.axis === false ? 4 : 26;
+    const H = top + bottom + rows.length * rowH;
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', o.aria);
+    const left = Math.min(W * (o.maxLeft || 0.45), measure(svg, rows.map(o.label)) + 18);
+    const x = d3.scaleLinear().domain([0, o.max]).range([left, W - 36]);
+    if (o.axis !== false) {
+      const ticks = x.ticks(W < 460 ? 5 : (o.max <= 5 ? 5 : 10));
+      svg.append('g').selectAll('line').data(ticks).join('line').attr('class', 'gridline').attr('x1', x).attr('x2', x).attr('y1', top - 4).attr('y2', H - bottom);
+      svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - bottom})`).call(d3.axisBottom(x).tickValues(ticks).tickSizeOuter(0));
+    }
+    const tip = tipper(el);
+    const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d, i) => `translate(0,${top + i * rowH})`);
+    g.append('text').attr('x', left - 8).attr('y', rowH / 2).attr('dy', '0.35em').attr('text-anchor', 'end').text(o.label).call(fit, left - 10);
+    g.append('rect').attr('x', x(0)).attr('y', 3).attr('height', rowH - 6).attr('rx', 3).attr('width', (d) => Math.max(0, x(o.value(d)) - x(0))).style('fill', o.color);
+    g.append('text').attr('x', (d) => x(o.value(d)) + 5).attr('y', rowH / 2).attr('dy', '0.35em').attr('class', 'num').text((d) => fmt(o.value(d)));
+    if (o.tip) g.append('rect').attr('width', W).attr('height', rowH).style('fill', 'transparent')
+      .on('pointermove', (ev, d) => { const t = o.tip(d); tip.show(ev, t[0], t.slice(1)); }).on('pointerleave', () => tip.hide());
+    if (o.refs) {
+      const rg = svg.append('g').style('pointer-events', 'none');
+      o.refs.forEach((r) => rg.append('line').attr('x1', x(r.v)).attr('x2', x(r.v)).attr('y1', top - 4).attr('y2', H - bottom).style('stroke', r.c).attr('stroke-width', 1.5).attr('stroke-dasharray', '4 3'));
+      o.refs.forEach((r) => rg.append('text').attr('x', x(r.v)).attr('y', 12).attr('text-anchor', 'middle').style('font-size', '11px').style('fill', 'var(--muted)').text(r.label));
+    }
+  }
+  function weekChart(el, rows) {
+    el.innerHTML = '';
+    const W = Math.max(280, el.clientWidth), H = 240, m = { t: 16, r: 8, b: 30, l: 30 };
+    const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Scored CLB and final interview reviews per week');
+    const lab = (w) => d3.utcFormat('%b %-d')(new Date(w + 'T00:00:00Z'));
+    const keys = [{ k: 'CLB reviews', c: 'var(--blue)', a: 'CLB average score' }, { k: 'Final interview reviews', c: 'var(--green)', a: 'Final interview average score' }];
+    const x = d3.scaleBand().domain(rows.map((r) => r['Week of'])).range([m.l, W - m.r]).padding(0.2);
+    const x1 = d3.scaleBand().domain(keys.map((k) => k.k)).range([0, x.bandwidth()]).padding(0.08);
+    const y = d3.scaleLinear().domain([0, (d3.max(rows, (r) => Math.max(r['CLB reviews'], r['Final interview reviews'])) || 1) * 1.12]).nice().range([H - m.b, m.t]);
+    const every = Math.ceil(rows.length / Math.max(1, Math.floor((W - m.l) / 56)));
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('class', 'gridline').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y).attr('y2', y);
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickFormat((d, i) => i % every ? '' : lab(d)).tickSizeOuter(0));
+    svg.append('g').attr('class', 'axis').attr('transform', `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(d3.format('d')));
+    const tip = tipper(el);
+    const g = svg.append('g').selectAll('g').data(rows).join('g').attr('transform', (d) => `translate(${x(d['Week of'])},0)`);
+    keys.forEach((K) => {
+      g.append('rect').attr('x', x1(K.k)).attr('width', x1.bandwidth()).attr('y', (d) => y(d[K.k])).attr('height', (d) => y(0) - y(d[K.k])).attr('rx', 2).style('fill', K.c);
+      if (x1.bandwidth() >= 14) g.append('text').attr('x', x1(K.k) + x1.bandwidth() / 2).attr('y', (d) => y(d[K.k]) - 4).attr('text-anchor', 'middle').style('font-size', '11px').text((d) => d[K.k] || '');
+    });
+    g.append('rect').attr('x', -x.step() * x.paddingInner() / 2).attr('width', x.step()).attr('y', m.t).attr('height', H - m.t - m.b).style('fill', 'transparent')
+      .on('pointermove', (ev, d) => tip.show(ev, `Week of ${lab(d['Week of'])}`, keys.map((K) => `${K.k}: ${d[K.k]}${d[K.a] != null ? ` (avg ${fmt(d[K.a])})` : ''}`)))
+      .on('pointerleave', () => tip.hide());
+  }
+
+  // ---------- sections ----------
+  function toolPanel(T, k, cfg) {
+    const kp = T[k + '_kpis'][0] || {};
+    const people = T[k + '_people'];
+    const unit = cfg.unit; // 'Videos' | 'Recordings'
+    const repeat = people.filter((r) => r.Change != null).sort((a, b) => b.Change - a.Change);
+    let h = `<p class="panelhead">${cfg.intro}</p><div class="tiles">`;
+    h += tile(cfg.who, fmt(kp.People), cfg.whoNote(kp));
+    h += tile(`Latest: ${cfg.tiers[0]}`, fmt(kp['Latest result top tier']), cfg.whoLower, 'good');
+    h += tile(`Latest: ${cfg.tiers[1]}`, fmt(kp['Latest result middle tier']), cfg.whoLower);
+    h += tile(`Latest: ${cfg.tiers[2]}`, fmt(kp['Latest result low tier']), cfg.whoLower, 'warn');
+    h += tile('Average latest score', fmt(kp['Average latest score']), cfg.avgNote);
+    h += cfg.extraTiles(kp);
+    h += `</div>`;
+    h += `<div class="card sec"><h3>Latest score by ${cfg.whoOne}</h3><p class="desc">${cfg.scoreDesc} Lines mark the 60 and 75 cut-offs.</p><div class="chart" id="${k}-score"></div>
+      <div class="legend"><span style="--sw:var(--green)">${cfg.tiers[0]}</span><span style="--sw:var(--blue)">${cfg.tiers[1]}</span><span style="--sw:var(--red)">${cfg.tiers[2]}</span></div></div>`;
+    h += `<div class="card sec"><h3>Did repeat ${cfg.whoPlural} improve?</h3><p class="desc">${cfg.who} with two or more different ${unit.toLowerCase()}, first versus latest. A re-score of the same ${cfg.unitOne} doesn't count. +3 or more is Improved, -3 or less Declined.</p>
+      <p class="take">${fmt(kp['People with 2+ ' + unit.toLowerCase()])} ${cfg.whoPlural}: ${fmt(kp.Improved)} improved, ${fmt(kp['About the same'])} about the same, ${fmt(kp.Declined)} declined. Average change ${signed(kp['Average change (repeat)'])} points.</p>
+      ${table([{ h: cfg.whoCap, k: 'Person' }, { h: 'Office', k: 'Office' }, { h: unit, k: unit, num: 1 }, { h: 'First', k: 'First score', num: 1 }, { h: 'Latest', k: 'Latest score', num: 1 },
+        { h: 'Change', num: 1, f: (r) => signed(r.Change) }, { h: 'Trend', f: (r) => pill(r.Trend, r.Trend === 'Improved' ? 'top' : r.Trend === 'Declined' ? 'low' : 'muted') }, { h: 'Latest result', f: (r) => pill(r['Latest result'], tier(r['Latest result'])) }], repeat)}</div>`;
+    h += `<div class="grid2"><div class="card"><h3>Rubric categories</h3><p class="desc">${cfg.catDesc}</p><div class="chart" id="${k}-cats"></div></div>
+      <div class="card"><h3>What the tool flagged</h3><p class="desc">Reviews carrying each kind of flag. One review can carry several.</p><div class="chart" id="${k}-flags"></div></div></div>`;
+    h += cfg.extraSections(T);
+    h += `<div class="card sec"><h3>${cfg.whoCap} summary</h3><p class="desc">${cfg.summaryDesc}</p><input class="search" type="search" placeholder="Search by name or office" data-filter="${k}-people">
+      <div id="${k}-people">${table(cfg.peopleCols, people, { scroll: 1 })}</div></div>`;
+    h += `<div class="card sec"><h3>Every ${cfg.label} review</h3><p class="desc">${cfg.reviewsDesc}</p><input class="search" type="search" placeholder="Search by name, office or result" data-filter="${k}-reviews">
+      <div id="${k}-reviews">${table(cfg.reviewCols, T[k + '_reviews'], { scroll: 1 })}</div></div>`;
+    return h;
+  }
+
+  function render(D) {
+    const T = D.tables, ov = T.overview[0], ck = T.clb_kpis[0], fk = T.fi_kpis[0];
+    const built = (D.meta || []).find((m) => m.label === 'Built');
+    $('#built').textContent = built ? `Last refreshed ${built.value}.` : '';
+    const clbCfg = {
+      label: 'CLB', unit: 'Videos', unitOne: 'video', who: 'Presenters', whoOne: 'presenter', whoCap: 'Presenter', whoPlural: 'presenters', whoLower: 'presenters',
+      tiers: ['Ready to publish', 'Publish after fixes', 'Re-record'],
+      intro: 'Agency owners\' career and company overview videos, scored by the CLB Review tool. Ready to publish is 75+, Publish after fixes is 60-74, Re-record is under 60 or an automatic rule. Scores here use the current rubric (from 10/3/2026); earlier-rubric runs are listed and counted as runs but not averaged.',
+      whoNote: (k) => `${fmt(k['Videos reviewed'])} different videos · ${fmt(k['People (any rubric)'])} counting earlier rubrics`,
+      avgNote: 'each presenter\'s latest video',
+      extraTiles: (k) => tile('Video length', `${fmt(k['Average length (min)'])} <small style="font-size:16px">min</small>`, 'average; target 13-15 min'),
+      scoreDesc: 'Each presenter\'s most recent video on the current rubric.',
+      catDesc: 'Average rating (1-5) on each presenter\'s latest video.',
+      extraSections: () => '',
+      summaryDesc: 'One row per presenter, best latest score first. Weak spots are categories rated 1 or 2 on the latest video. The earlier-rubric columns are for reference only.',
+      reviewsDesc: 'All runs, newest first, including re-scores and failed uploads. Runs before 10/3/2026 were scored on an earlier rubric and are labeled; their scores aren\'t directly comparable.',
+      peopleCols: [{ h: 'Presenter', k: 'Person' }, { h: 'Agency', k: 'Agency' }, { h: 'Office', k: 'Office' }, { h: 'Reviews', k: 'Reviews', num: 1 }, { h: 'Videos', k: 'Videos', num: 1 },
+        { h: 'Latest', k: 'Latest score', num: 1 }, { h: 'Best', k: 'Best score', num: 1 }, { h: 'Latest result', f: (r) => pill(r['Latest result'], tier(r['Latest result'])) }, { h: 'Latest date', k: 'Latest date' },
+        { h: 'Length (min)', k: 'Latest length (min)', num: 1 }, { h: 'Compliance flags', k: 'Compliance flags', num: 1 }, { h: 'Earlier-rubric runs', k: 'Earlier-rubric reviews', num: 1 }, { h: 'Earlier-rubric best', k: 'Earlier-rubric best', num: 1 }, { h: 'Latest weak spots', k: 'Latest weak spots' }],
+      reviewCols: [{ h: 'Date', k: 'Date' }, { h: 'Rubric', f: (r) => pill(r.Rubric, r.Rubric === 'Current' ? 'mid' : 'muted') }, { h: 'Presenter', k: 'Person' }, { h: 'Agency', k: 'Agency' }, { h: 'Office', k: 'Office' },
+        { h: 'Score', k: 'Overall score', num: 1 }, { h: 'Result', f: (r) => pill(r.Result, tier(r.Result)) }, { h: 'Min', k: 'Minutes', num: 1 }, { h: 'Flags', f: notes }, { h: 'Re-score', k: 'Re-score of same video' }],
+    };
+    const fiCfg = {
+      label: 'final interview', unit: 'Recordings', unitOne: 'recording', who: 'Interviewers', whoOne: 'interviewer', whoCap: 'Interviewer', whoPlural: 'interviewers', whoLower: 'interviewers',
+      tiers: ['Strong interview', 'Good, with fixes', 'Needs coaching'],
+      intro: 'Final interviews run by agency owners, directors and regional directors, scored by the Final Interview Review tool. The tool scores the interviewer only. Strong is 75+, Good, with fixes is 60-74, Needs coaching is under 60 or an automatic rule.',
+      whoNote: (k) => `${fmt(k['Recordings reviewed'])} different recordings`,
+      avgNote: 'each interviewer\'s latest recording',
+      extraTiles: (k) => tile('Candidate talk share', `${fmt(k['Average candidate talk share (%)'])}<small style="font-size:16px">%</small>`, 'average; target 30-50%') + tile('Interview length', `${fmt(k['Average length (min)'])} <small style="font-size:16px">min</small>`, 'average; target 15-25 min'),
+      scoreDesc: 'Each interviewer\'s most recent recording.',
+      catDesc: 'Average rating (1-5) on each interviewer\'s latest review. On-camera presence and appearance are scored only for video.',
+      extraSections: (T) => {
+        const cl = T.fi_checklist || [];
+        const max = d3.max(cl, (r) => r.People) || 1;
+        const bar = (r) => `<div title="${r.Missed} missed, ${r.Partial} partial" style="display:flex;height:10px;min-width:140px;border-radius:3px;overflow:hidden;background:var(--grid);margin-top:4px"><div style="width:${100 * r.Missed / max}%;background:var(--red)"></div><div style="width:${100 * r.Partial / max}%;background:var(--blue);opacity:.55"></div></div>`;
+        return `<div class="card sec"><h3>Interview checklist: what gets missed</h3><p class="desc">Across each interviewer's latest review, how many missed each key moment entirely or covered it only in part. Most missed: <b>${esc(cl[0] ? cl[0]['Checklist item'] : '—')}</b>.</p>
+          ${table([{ h: 'Checklist item', k: 'Checklist item' }, { h: 'Missed', k: 'Missed', num: 1 }, { h: 'Partial', k: 'Partial', num: 1 }, { h: `Of ${max} interviewers`, f: bar }], cl)}
+          <div class="legend"><span style="--sw:var(--red)">Missed</span><span style="--sw:var(--blue)">Partial</span></div></div>`;
+      },
+      summaryDesc: 'One row per interviewer, best latest score first. Weak spots are categories rated 1 or 2 on the latest review.',
+      reviewsDesc: 'All runs, newest first, including re-scores, practice runs and failed uploads.',
+      peopleCols: [{ h: 'Interviewer', k: 'Person' }, { h: 'Office', k: 'Office' }, { h: 'Role', k: 'Role' }, { h: 'Reviews', k: 'Reviews', num: 1 }, { h: 'Recordings', k: 'Recordings', num: 1 },
+        { h: 'Latest', k: 'Latest score', num: 1 }, { h: 'Best', k: 'Best score', num: 1 }, { h: 'Latest result', f: (r) => pill(r['Latest result'], tier(r['Latest result'])) }, { h: 'Latest date', k: 'Latest date' },
+        { h: 'Length (min)', k: 'Latest length (min)', num: 1 }, { h: 'Talk share %', k: 'Latest talk share (%)', num: 1 }, { h: 'Compliance flags', k: 'Compliance flags', num: 1 }, { h: 'Latest weak spots', k: 'Latest weak spots' }],
+      reviewCols: [{ h: 'Date', k: 'Date' }, { h: 'Interviewer', k: 'Person' }, { h: 'Office', k: 'Office' }, { h: 'Role', k: 'Role' }, { h: 'Recording', k: 'Recording' }, { h: 'Practice', k: 'Practice run' },
+        { h: 'Score', k: 'Overall score', num: 1 }, { h: 'Result', f: (r) => pill(r.Result, tier(r.Result)) }, { h: 'Min', k: 'Minutes', num: 1 }, { h: 'Talk %', k: 'Candidate talk share (%)', num: 1 },
+        { h: 'Items missed', k: 'Checklist missed', num: 1 }, { h: 'Flags', f: notes }, { h: 'Re-score', k: 'Re-score of same recording' }],
+    };
+
+    let h = `<p class="take">${fmt(ov['Leaders using either tool'])} leaders have run the CLB Review or Final Interview Review tools, and ${fmt(ov['Leaders using both tools'])} have used both. CLB videos average <b>${fmt(ck['Average latest score'])}</b> on each presenter's latest video; final interviews average <b>${fmt(fk['Average latest score'])}</b> on each interviewer's latest recording.</p>
+      <p class="sub">Latest review in either log: ${esc(ov['Latest review date'])} · Scores are out of 100.</p>
+      <div class="tiles">
+        ${tile('Leaders using the tools', fmt(ov['Leaders using either tool']), `${fmt(ov['Leaders using both tools'])} use both · ${fmt(ov['CLB only'])} CLB only · ${fmt(ov['Final interview only'])} interview only`)}
+        ${tile('CLB reviews scored', fmt(ov['CLB reviews scored']), `${fmt(ck['Reviews last 7 days'])} in the last 7 days, ${fmt(ck['Reviews prior 7 days'])} the 7 days before`)}
+        ${tile('Final interview reviews scored', fmt(ov['Final interview reviews scored']), `${fmt(fk['Reviews last 7 days'])} in the last 7 days, ${fmt(fk['Reviews prior 7 days'])} the 7 days before`)}
+        ${tile('CLB average latest score', fmt(ck['Average latest score']), 'each presenter\'s latest video', 'good')}
+        ${tile('Final interview average latest score', fmt(fk['Average latest score']), 'each interviewer\'s latest recording', 'good')}
+        ${tile('Reviews with a compliance flag', `${fmt(ck['Reviews with a compliance flag'])} / ${fmt(fk['Reviews with a compliance flag'])}`, 'CLB / final interview', 'warn')}
+      </div>
+      <div class="card sec"><h3>Reviews per week</h3><p class="desc">Scored reviews from each tool by the week they ran (weeks start Monday).</p><div class="chart" id="weekly"></div>
+        <div class="legend"><span style="--sw:var(--blue)">CLB overview</span><span style="--sw:var(--green)">Final interview</span></div></div>
+      <details class="card sec fold" id="leaders"><summary><h3>By leader: who has run each tool</h3><span class="hint"><span class="hint-show">Show ${T.leaders.length} leaders</span><span class="hint-hide">Hide</span></span></summary>
+        <p class="desc">How many times each leader has run each tool and their latest result. CLB runs include runs scored on an earlier rubric. Leaders who use both come first.</p>
+        <input class="search" type="search" placeholder="Search by name, office or agency" data-filter="leaders-table">
+        <div id="leaders-table">${table([{ h: 'Leader', k: 'Leader' }, { h: 'Office', k: 'Office' }, { h: 'Agency', k: 'Agency' }, { h: 'CLB runs', k: 'CLB reviews', num: 1 }, { h: 'CLB latest', k: 'CLB latest score', num: 1 },
+          { h: 'CLB result', f: (r) => pill(r['CLB latest result'], tier(r['CLB latest result'])) }, { h: 'Interview runs', k: 'Final interview reviews', num: 1 }, { h: 'Interview latest', k: 'Final interview latest score', num: 1 },
+          { h: 'Interview result', f: (r) => pill(r['Final interview latest result'], tier(r['Final interview latest result'])) }, { h: 'Tools used', k: 'Tools used' }, { h: 'Last review', k: 'Last review' }], T.leaders, { scroll: 1 })}</div>
+      </details>
+      ${T.directors && T.roster ? `<details class="card sec fold" id="directors"><summary><h3>By director: which agency owners have used each tool</h3><span class="hint"><span class="hint-show">Show ${T.directors.length} directors</span><span class="hint-hide">Hide</span></span></summary>
+        <p class="desc">Agency owners on each director's list and whether their agency has run a CLB, a final interview, both or neither. Partnerships count their parent agency's runs. CLB runs include earlier-rubric runs.</p>
+        ${table([{ h: 'Director', k: 'Director' }, { h: 'Agency owners', k: 'Agency owners', num: 1 }, { h: 'With a CLB', k: 'With a CLB', num: 1 }, { h: 'With a final interview', k: 'With a final interview', num: 1 },
+          { h: 'Both', k: 'With both', num: 1 }, { h: 'Neither yet', k: 'Neither yet', num: 1 }, { h: 'Coverage (%)', k: 'Coverage (%)', num: 1 }, { h: 'Last run', k: 'Last run' }], T.directors, { scroll: 1 })}
+        <h3 style="margin-top:18px">Agency owners</h3>
+        <input class="search" type="search" placeholder="Search by director or agency owner" data-filter="roster-table">
+        <div id="roster-table">${table([{ h: 'Director', k: 'Director' }, { h: 'Agency owner', k: 'Agency owner' }, { h: 'Status', k: 'Status' }, { h: 'CLB runs', k: 'CLB runs', num: 1 }, { h: 'CLB latest', k: 'CLB latest score', num: 1 },
+          { h: 'CLB last run', k: 'CLB last run' }, { h: 'Interview runs', k: 'Final interview runs', num: 1 }, { h: 'Interview latest', k: 'Final interview latest score', num: 1 }, { h: 'Interview last run', k: 'Final interview last run' }, { h: 'Counted from', k: 'Counted from' }], T.roster, { scroll: 1 })}</div>
+        ${(T.roster_unmatched || []).length ? `<p class="desc" style="margin-top:12px">Not yet on a director's list: ${T.roster_unmatched.map((r) => esc(r.Person) + ' (' + esc(r.Tool) + ')').join(', ')}.</p>` : ''}
+      </details>` : ''}
+      <nav class="tabs" role="tablist" aria-label="Recruiting tools">
+        <button class="tab" role="tab" data-tab="clb" aria-selected="true">CLB Overviews<small>${fmt(ck.People)} presenters · ${fmt(ck['Reviews scored'])} reviews</small></button>
+        <button class="tab" role="tab" data-tab="fi" aria-selected="false">Final Interviews<small>${fmt(fk.People)} interviewers · ${fmt(fk['Reviews scored'])} reviews</small></button>
+        <a class="totop" href="#top">↑ Top</a>
+      </nav>
+      <section id="clb" role="tabpanel">${toolPanel(T, 'clb', clbCfg)}</section>
+      <section id="fi" role="tabpanel" hidden>${toolPanel(T, 'fi', fiCfg)}</section>
+      <details class="card fold" id="notes"><summary><h3>Data notes: name groupings and things to check</h3><span class="hint"><span class="hint-show">Show</span><span class="hint-hide">Hide</span></span></summary>
+        ${table([{ h: 'Tool', k: 'Tool' }, { h: 'Topic', k: 'Topic' }, { h: 'Detail', k: 'Detail' }, { h: 'How it\'s handled', k: 'Handling' }], T.checks)}</details>`;
+    $('#app').innerHTML = h;
+
+    const draw = () => {
+      const wk = $('#weekly'); if (wk && wk.offsetParent) weekChart(wk, T.weekly);
+      [['clb', clbCfg], ['fi', fiCfg]].forEach(([k, cfg]) => {
+        const sc = $(`#${k}-score`); if (!sc || !sc.offsetParent) return;
+        const rows = T[k + '_people'].filter((r) => r['Latest score'] != null).sort((a, b) => b['Latest score'] - a['Latest score']);
+        hbar(sc, rows, { label: (d) => d.Person, value: (d) => d['Latest score'], max: 100, color: (d) => tierColor(d['Latest result']), maxLeft: 0.42, rowH: 21,
+          refs: [{ v: FIX, label: '60', c: '#9AA5B1' }, { v: STRONG, label: '75', c: 'var(--green)' }], aria: `Latest score by ${cfg.whoOne}`,
+          tip: (d) => [`${d.Person}: ${fmt(d['Latest score'])}`, d['Latest result'], [d.Role, d.Agency, d.Office].filter(Boolean).join(' · '), `Latest review ${d['Latest date']} · ${d.Reviews} review${d.Reviews === 1 ? '' : 's'}`] });
+        hbar($(`#${k}-cats`), T[k + '_categories'].filter((r) => r['Average (1-5)'] != null), { label: (d) => d.Category, value: (d) => d['Average (1-5)'], max: 5, maxLeft: 0.5, rowH: 24,
+          color: (d) => d['Average (1-5)'] < 3 ? 'var(--red)' : 'var(--blue)', aria: 'Average rating by rubric category',
+          tip: (d) => [`${d.Category}: ${fmt(d['Average (1-5)'])} of 5`, `${d['Rated 1-2']} of ${d['People scored']} rated 1-2`] });
+        hbar($(`#${k}-flags`), T[k + '_flags'], { label: (d) => d.Flag, value: (d) => d.Reviews, max: d3.max(T[k + '_flags'], (r) => r.Reviews) || 1, maxLeft: 0.55, axis: false,
+          color: (d) => /compliance|automatic/i.test(d.Flag) ? 'var(--red)' : 'var(--gray)', aria: 'Reviews carrying each kind of flag' });
+      });
+    };
+
+    // tabs, with #clb / #fi links
+    const show = (id, scroll) => {
+      document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === id ? 'true' : 'false'));
+      ['clb', 'fi'].forEach((p) => { $('#' + p).hidden = p !== id; });
+      if (location.hash !== '#' + id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} }
+      draw();
+      const bar = $('.tabs');
+      if (scroll && bar.getBoundingClientRect().top < 0) bar.scrollIntoView({ block: 'start' });
+    };
+    document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => show(b.dataset.tab, true)));
+    const fromHash = () => { const hsh = location.hash.replace('#', ''); if (hsh === 'clb' || hsh === 'fi') show(hsh, false); };
+    window.addEventListener('hashchange', fromHash);
+    fromHash();
+
+    // search boxes filter table rows
+    document.querySelectorAll('input[data-filter]').forEach((inp) => inp.addEventListener('input', () => {
+      const q = inp.value.trim().toLowerCase();
+      document.querySelectorAll(`#${inp.dataset.filter} tbody tr`).forEach((tr) => { tr.hidden = q && !tr.textContent.toLowerCase().includes(q); });
+    }));
+
+    draw();
+    let w = window.innerWidth;
+    window.addEventListener('resize', () => { if (Math.abs(window.innerWidth - w) > 20) { w = window.innerWidth; draw(); } });
+    let before = null;
+    window.addEventListener('beforeprint', () => { before = ['clb', 'fi'].map((p) => $('#' + p).hidden); ['clb', 'fi'].forEach((p) => { $('#' + p).hidden = false; }); draw(); });
+    window.addEventListener('afterprint', () => { if (before) ['clb', 'fi'].forEach((p, i) => { $('#' + p).hidden = before[i]; }); before = null; });
+  }
+
+  fetch('data.json', { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(render)
+    .catch(() => { $('#app').innerHTML = '<div class="status">The results couldn\'t be loaded. Try refreshing the page.</div>'; });
+})();
+</script>
+</body>
+</html>
