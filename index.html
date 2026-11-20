@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
 <title>Recruiting Process Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
@@ -19,7 +19,10 @@
 html { scroll-behavior: smooth; }
 body { margin:0; background:var(--bg); color:var(--fg); font-family:'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size:15px; line-height:1.45; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 20px 40px; }
-header.brand { display:flex; gap:12px; align-items:stretch; border-bottom:4px solid var(--blue); padding-bottom:12px; margin-bottom:16px; }
+header.brand { display:flex; gap:12px; align-items:stretch; background:#fff; border-radius:14px; border-bottom:4px solid var(--blue); padding:14px 18px; margin-bottom:16px; box-shadow:0 2px 4px rgba(16,24,40,.06), 0 10px 26px rgba(0,85,140,.12); }
+.powered { margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:3px; font-size:11px; color:var(--muted); }
+.powered img { height:40px; width:auto; display:block; }
+@media (max-width:640px) { header.brand { flex-wrap:wrap; } .powered { margin-left:0; align-items:flex-start; } }
 header.brand .bar { width:7px; border-radius:3px; background:var(--green); }
 .eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); font-weight:700; }
 h1 { font-family:'Source Serif 4', Georgia, serif; font-weight:600; font-size:30px; margin:2px 0 0; }
@@ -27,7 +30,7 @@ h1 { font-family:'Source Serif 4', Georgia, serif; font-weight:600; font-size:30
 .sub { font-size:13px; color:var(--muted); margin:0 0 18px; }
 .num { font-variant-numeric: tabular-nums; }
 .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(165px, 1fr)); gap:12px; margin-bottom:18px; }
-.card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; min-width:0; }
+.card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:16px 18px; min-width:0; box-shadow:0 1px 2px rgba(16,24,40,.05), 0 6px 18px rgba(16,24,40,.07); }
 .tile { border-top:4px solid var(--blue); }
 .tile.good { border-top-color:var(--green); } .tile.warn { border-top-color:var(--red); }
 .tile .label { font-size:13px; color:var(--muted); }
@@ -70,7 +73,33 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
 .tabs { display:flex; gap:10px; align-items:stretch; position:sticky; top:0; z-index:20; background:var(--bg); padding:10px 0; border-bottom:4px solid var(--blue); margin:22px 0 16px; }
 .tab { flex:1 1 0; font:inherit; font-size:18px; font-weight:700; padding:14px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); color:var(--fg); cursor:pointer; }
 .tab:hover { border-color:var(--blue); }
-.tab[aria-selected="true"] { background:var(--blue); color:#fff; border-color:var(--blue); }
+.tab { box-shadow:0 1px 2px rgba(16,24,40,.05), 0 3px 10px rgba(16,24,40,.06); }
+.tab[aria-selected="true"] { background:var(--blue); color:#fff; border-color:var(--blue); box-shadow:0 2px 4px rgba(0,85,140,.25), 0 8px 20px rgba(0,85,140,.28); }
+.filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:0 0 4px; }
+.filters label { font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:3px; }
+.filters select { font:inherit; font-size:14px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; min-width:200px; box-shadow:0 1px 2px rgba(16,24,40,.05); }
+.filters .reset { align-self:flex-end; font:inherit; font-size:13px; padding:7px 12px; border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--blue); cursor:pointer; }
+.scope { font-size:13px; color:var(--muted); margin:6px 0 0; }
+.hero .big { font-family:'Source Serif 4', Georgia, serif; font-size:40px; line-height:1.1; font-variant-numeric:tabular-nums; }
+.hero .lead { font-size:15px; color:var(--muted); }
+.stack { display:flex; height:18px; border-radius:7px; overflow:hidden; margin:14px 0 8px; background:var(--grid); box-shadow:inset 0 1px 3px rgba(0,0,0,.16), 0 1px 2px rgba(16,24,40,.06); }
+.stack div { height:100%; }
+.mini { display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px; margin-top:14px; }
+.mini > div { background:var(--bg); border-radius:10px; padding:10px 12px; box-shadow:inset 0 1px 2px rgba(16,24,40,.07); }
+.mini b { display:block; font-family:'Source Serif 4', Georgia, serif; font-size:24px; font-weight:600; font-variant-numeric:tabular-nums; }
+.mini span { font-size:12.5px; color:var(--muted); }
+.theme { margin:0 0 12px; }
+.theme .row { display:flex; justify-content:space-between; gap:10px; font-size:14px; }
+.theme .track { height:8px; background:var(--grid); border-radius:5px; margin-top:5px; box-shadow:inset 0 1px 2px rgba(0,0,0,.14); }
+.theme .fill { height:8px; border-radius:5px; background:#D2632F; box-shadow:0 1px 3px rgba(210,99,47,.45); }
+.theme details summary { font-size:12.5px; color:var(--blue); cursor:pointer; margin-top:4px; }
+.theme details div { font-size:13px; margin-top:4px; line-height:1.7; }
+.chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.chip { font-size:12.5px; padding:3px 10px; border-radius:999px; background:var(--green10); color:#1F6B2C; box-shadow:0 1px 2px rgba(16,24,40,.06); }
+.chip.none { background:var(--red10); color:var(--red); }
+.st { display:inline-block; padding:1px 9px; border-radius:999px; font-size:12px; white-space:nowrap; }
+.st.current { background:var(--green10); color:#1F6B2C; } .st.work { background:#FDF1DE; color:#8A5307; } .st.due { background:var(--blue10); color:var(--blue); } .st.never { background:#EEF0F3; color:var(--gray); }
+.fu td.hot { color:var(--red); font-weight:600; }
 .tab small { display:block; font-size:12.5px; font-weight:400; opacity:.85; }
 .totop { align-self:center; white-space:nowrap; font-size:13px; color:var(--blue); text-decoration:none; border:1px solid var(--line); border-radius:999px; padding:6px 12px; background:var(--panel); }
 .panelhead { font-size:13px; color:var(--muted); margin:0 0 14px; max-width:90ch; }
@@ -80,6 +109,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
 .sc-btn, .who-btn { font:inherit; font-size:13px; cursor:pointer; }
 .sc-btn { padding:3px 10px; border:1px solid var(--blue); color:var(--blue); background:#fff; border-radius:6px; white-space:nowrap; }
 .sc-btn:hover { background:var(--blue); color:#fff; }
+.go-btn, .go-dir { font:inherit; font-size:13px; cursor:pointer; padding:0; border:0; background:none; color:var(--blue); text-decoration:underline; text-align:left; }
 .who-btn { padding:0; border:0; background:none; color:var(--blue); text-decoration:underline; text-align:left; }
 #sc-modal { position:fixed; inset:0; background:rgba(16,24,40,.55); display:flex; align-items:center; justify-content:center; z-index:50; padding:16px; }
 #sc-modal[hidden] { display:none; }
@@ -95,7 +125,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
 #sc-pass input { font:inherit; font-size:16px; padding:9px 11px; border:1px solid var(--line); border-radius:8px; width:100%; margin:10px 0; }
 #sc-pass button { font:inherit; font-size:15px; padding:8px 16px; border:0; background:var(--blue); color:#fff; border-radius:8px; cursor:pointer; }
 #sc-msg { color:var(--red); font-size:14px; min-height:20px; }
-@media print { .tabs, .search, .sc-btn, #sc-modal { display:none; } .scroll { max-height:none; border:0; } th { position:static; } body { background:#fff; } }
+@media print { .filters, .tabs, .search, .sc-btn, #sc-modal { display:none; } .scroll { max-height:none; border:0; } th { position:static; } body { background:#fff; } }
 </style>
 </head>
 <body>
@@ -106,6 +136,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       <div class="eyebrow">Globe Life Liberty National Division · The Whittingham Agencies</div>
       <h1>Recruiting Process Dashboard</h1>
     </div>
+    <div class="powered"><span>Powered by</span><img src="brand/wpts-logo.png" alt="Whittingham Professional Training Services"></div>
   </header>
 
   <div id="app"><div class="status">Loading the latest results…</div></div>
@@ -386,8 +417,162 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
         { h: 'Items missed', k: 'Checklist missed', num: 1 }, { h: 'Flags', f: notes }, { h: 'Re-score', k: 'Re-score of same recording' }],
     };
 
-    let h = `<p class="take">${fmt(ov['Leaders using either tool'])} leaders have run the CLB Review or Final Interview Review tools, and ${fmt(ov['Leaders using both tools'])} have used both. CLB videos average <b>${fmt(ck['Average latest score'])}</b> on each presenter's latest video; final interviews average <b>${fmt(fk['Average latest score'])}</b> on each interviewer's latest recording.</p>
-      <p class="sub">Latest review in either log: ${esc(ov['Latest review date'])} · Scores are out of 100.</p>
+    // ---------- coaching and accountability view ----------
+    const DAY = 864e5;
+    const lead = new Map(T.leaders.map((r) => [r.Leader, r]));
+    const cp = new Map(T.clb_people.map((r) => [r.Person, r]));
+    const fp = new Map(T.fi_people.map((r) => [r.Person, r]));
+    const officeOf = (n) => (lead.get(n) || {}).Office || (cp.get(n) || {}).Office || (fp.get(n) || {}).Office || '';
+    const agencyOf = (n) => (lead.get(n) || {}).Agency || (cp.get(n) || {}).Agency || '';
+    const owners = (T.roster || []).map((r) => ({ ...r, people: String(r['Counted from'] || '').split(/,\s*|\s+and\s+/).map((x) => x.trim()).filter(Boolean) }));
+    const dirs = [...new Set(owners.map((r) => r.Director))].sort();
+    const allAgencies = [...new Set(T.leaders.map((r) => r.Agency).concat(T.clb_people.map((r) => r.Agency)).filter(Boolean))].sort();
+    const ls = { get: (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} } };
+    const F = { dir: '', agency: '', win: [3, 6, 12].includes(+ls.get('rpd-window')) ? +ls.get('rpd-window') : 6 };
+    let S = null;
+    function makeScope() {
+      if (!F.dir && !F.agency) return { all: true, owners, match: () => true };
+      let rows = owners;
+      if (F.dir) rows = rows.filter((r) => r.Director === F.dir);
+      if (F.agency) rows = rows.filter((r) => r.people.some((p) => agencyOf(p) === F.agency));
+      const persons = new Set(), agencies = new Set(), offices = new Set();
+      rows.forEach((r) => r.people.forEach((p) => { persons.add(p); const a = agencyOf(p); if (a) agencies.add(a); const o = officeOf(p); if (o) offices.add(o); }));
+      if (F.agency) { agencies.clear(); agencies.add(F.agency); lead.forEach((r, n) => { if (r.Agency === F.agency) { persons.add(n); if (r.Office) offices.add(r.Office); } }); }
+      const match = (r) => { const n = r.Person || r.Leader; return persons.has(n) || (!!r.Agency && agencies.has(r.Agency)) || (!!r.Office && offices.has(r.Office)); };
+      return { all: false, owners: rows, match };
+    }
+    const age = (d) => d ? (Date.now() - Date.parse(d)) / DAY : Infinity;
+    function clbStatus(r) {
+      if (!r['CLB runs']) return 'never';
+      const s = r['CLB latest score'];
+      if (s == null) return 'due';
+      if (s < STRONG) return 'work';
+      return age(r['CLB last run']) <= F.win * 30.44 ? 'current' : 'due';
+    }
+    const KEYS = ['current', 'work', 'due', 'never'];
+    const ST = { current: 'Current', work: 'Needs work', due: 'Due for refresh', never: 'Never run' };
+    const SC = { current: '#319B42', work: '#E39B2B', due: '#7FB2DA', never: '#B8BEC6' };
+    const stPill = (k) => `<span class="st ${k}">${ST[k]}</span>`;
+    const winTxt = () => F.win === 12 ? 'year' : `${F.win} months`;
+
+    function fiOffices() {
+      const by = new Map();
+      T.fi_people.filter((r) => S.match(r) && r.Benchmark !== 'Yes').forEach((r) => {
+        const o = r.Office || 'Office not set'; const e = by.get(o) || { office: o, n: 0, last: '' };
+        e.n++; if ((r['Latest date'] || '') > e.last) e.last = r['Latest date']; by.set(o, e);
+      });
+      const all = new Set(by.keys());
+      S.owners.forEach((r) => r.people.forEach((p) => { const o = officeOf(p); if (o) all.add(o); }));
+      const none = [...all].filter((o) => !by.has(o)).sort();
+      return { ran: [...by.values()].sort((a, b) => b.n - a.n || a.office.localeCompare(b.office)), none, total: all.size };
+    }
+
+    function themes(k) {
+      const cats = T[k + '_categories'].map((c) => c.Category);
+      const by = new Map();
+      T[k + '_reviews'].forEach((r, i) => {
+        if (r['Overall score'] == null || r.Rubric !== 'Current' || r.Benchmark === 'Yes' || !S.match(r)) return;
+        const a = by.get(r.Person) || []; a.push({ r, i }); by.set(r.Person, a);
+      });
+      const hits = new Map(cats.map((c) => [c, []]));
+      by.forEach((list, who) => {
+        list.sort((a, b) => (a.r.Date < b.r.Date ? 1 : a.r.Date > b.r.Date ? -1 : a.i - b.i));
+        const latest = list[0].r, prev = list[1] && list[1].r;
+        const weak = new Set(cats.filter((c) => latest[c] != null && latest[c] <= 2));
+        if (prev && prev['Overall score'] > latest['Overall score']) cats.forEach((c) => { if (prev[c] != null && prev[c] <= 2) weak.add(c); });
+        weak.forEach((c) => hits.get(c).push(who));
+      });
+      const n = by.size;
+      return { n, list: cats.map((c) => ({ c, who: hits.get(c).sort(), pct: n ? Math.round(100 * hits.get(c).length / n) : 0 })).filter((x) => x.who.length).sort((a, b) => b.who.length - a.who.length || a.c.localeCompare(b.c)) };
+    }
+    function themeCard(k, title, who, top) {
+      const t = themes(k), one = who.replace(/s$/, ''), rec = k === 'clb' ? 'video' : 'recording';
+      const rows = t.list.slice(0, top);
+      return `<div class="card"><h3>${title}</h3><p class="desc">Share of the ${t.n} ${t.n === 1 ? one : who} in view whose latest ${rec} rated it 1 or 2 out of 5. Once a newer, better-scoring ${rec} fixes it, they drop off.</p>
+        ${rows.length ? rows.map((x) => `<div class="theme"><div class="row"><span>${esc(x.c)}</span><b class="num">${x.pct}%</b></div><div class="track"><div class="fill" style="width:${Math.max(x.pct, 2)}%"></div></div>
+          <details><summary>${x.who.length} ${x.who.length === 1 ? one : who}: see who</summary><div>${x.who.map((n) => `<button class="go-btn" type="button" data-tool="${k}" data-who="${esc(n)}">${esc(n)}</button>`).join(', ')}</div></details></div>`).join('')
+          : `<p class="muted">${t.n ? 'No weak spots on the latest runs in view.' : 'No scored runs in view yet.'}</p>`}</div>`;
+    }
+
+    function readiness(withFinals) {
+      const st = { current: 0, work: 0, due: 0, never: 0 };
+      S.owners.forEach((r) => st[clbStatus(r)]++);
+      const n = S.owners.length;
+      let h = `<div class="card sec hero">`;
+      if (!n) h += `<p class="lead">No agency owners on the corporate director list for this view yet.</p>`;
+      else h += `<div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${st.current} of ${n}</span><span class="lead">agency owners have a current CLB on file (${STRONG}+ and recorded in the last ${winTxt()})</span></div>
+        <div class="stack" role="img" aria-label="${KEYS.map((k) => `${ST[k]} ${st[k]}`).join(', ')}">${KEYS.map((k) => st[k] ? `<div title="${ST[k]}: ${st[k]}" style="width:${100 * st[k] / n}%;background:${SC[k]}"></div>` : '').join('')}</div>
+        <div class="legend">${KEYS.map((k) => `<span style="--sw:${SC[k]}">${ST[k]} ${st[k]}</span>`).join('')}</div>`;
+      if (withFinals) {
+        const o = fiOffices();
+        h += `<div class="mini"><div><b>${o.ran.length} of ${o.total}</b><span>offices have had a final interview reviewed</span></div>
+          <div><b class="${o.none.length ? 'low' : ''}">${o.none.length}</b><span>offices with no final interview reviewed yet</span></div>
+          <div><b>${o.ran.reduce((a, e) => a + e.n, 0)}</b><span>people who've had a final interview reviewed</span></div></div>`;
+      }
+      return h + '</div>';
+    }
+    function officesCard() {
+      const o = fiOffices();
+      return `<div class="card sec hero"><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${o.ran.length} of ${o.total}</span><span class="lead">offices have had at least one final interview reviewed</span></div>
+        <p class="desc" style="margin-top:8px">The number is how many people in each office have had a final interview reviewed. One person is enough to count the office.</p>
+        <div class="chips">${o.ran.map((e) => `<span class="chip" title="Latest ${esc(e.last)}">${esc(e.office)} · ${e.n}</span>`).join('')}${o.none.map((x) => `<span class="chip none">${esc(x)} · 0</span>`).join('')}</div></div>`;
+    }
+
+    function followUp() {
+      const fiO = new Set(fiOffices().ran.map((e) => e.office));
+      const by = new Map();
+      S.owners.forEach((r) => {
+        const e = by.get(r.Director) || { d: r.Director, n: 0, never: 0, work: 0, due: 0, current: 0, noFi: new Set() };
+        e.n++; e[clbStatus(r)]++;
+        r.people.forEach((p) => { const o = officeOf(p); if (o && !fiO.has(o)) e.noFi.add(o); });
+        by.set(r.Director, e);
+      });
+      const rows = [...by.values()].map((e) => ({ ...e, gap: e.never * 3 + e.work * 2 + e.due + e.noFi.size * 2 })).sort((a, b) => b.gap - a.gap || a.d.localeCompare(b.d));
+      const top = S.all ? rows.filter((r) => r.gap > 0).slice(0, 6) : rows;
+      const hot = (v) => `<td class="r ${v ? 'hot' : ''}">${v}</td>`;
+      return `<h3>${S.all ? 'Corporate directors needing follow-up' : 'Corporate director accountability'}</h3>
+        <p class="desc">${S.all ? `The ${top.length} corporate directors with the biggest gaps, worst first. The full list is under "By corporate director" below.` : 'Agency owners on this corporate director\'s list and where they stand.'}</p>
+        <div class="tablewrap"><table><thead><tr><th>Corporate director</th><th class="r">Agency owners</th><th class="r">Current CLB</th><th class="r">Never ran CLB</th><th class="r">CLB under ${STRONG}</th><th class="r">Due for refresh</th><th>Offices with no final interview</th></tr></thead>
+        <tbody>${top.map((e) => `<tr><td><button class="go-dir" type="button" data-dir="${esc(e.d)}">${esc(e.d)}</button></td><td class="r">${e.n}</td><td class="r">${e.current}</td>${hot(e.never)}${hot(e.work)}<td class="r">${e.due}</td><td class="${e.noFi.size ? 'hot' : ''}">${e.noFi.size ? esc([...e.noFi].sort().join(', ')) : 'None'}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">Nothing needs follow-up right now.</td></tr>'}</tbody></table></div>`;
+    }
+    function weakOf(r) {
+      const all = [];
+      r.people.forEach((p) => String((cp.get(p) || {})['Latest weak spots'] || '').split('; ').forEach((w) => { const m = w.match(/^(.*) \((\d)\)$/); if (m) all.push([m[1], +m[2]]); }));
+      all.sort((a, b) => a[1] - b[1]);
+      return [...new Set(all.map((x) => x[0]))].slice(0, 2).join('; ');
+    }
+    function ownersTable() {
+      const fiO = new Map(fiOffices().ran.map((e) => [e.office, e.n]));
+      const order = { never: 0, work: 1, due: 2, current: 3 };
+      const rows = S.owners.map((r) => { const offs = [...new Set(r.people.map(officeOf).filter(Boolean))]; return { r, k: clbStatus(r), fi: offs.reduce((a, o) => a + (fiO.get(o) || 0), 0), offs }; })
+        .sort((a, b) => order[a.k] - order[b.k] || a.r.Director.localeCompare(b.r.Director));
+      return `<p class="desc">Each agency owner on the list: CLB status, whether anyone in their office has had a final interview reviewed, and the top two things to coach from their latest CLB.</p>
+        <div class="tablewrap scroll"><table><thead><tr><th>Corporate director</th><th>Agency owner</th><th>CLB status</th><th class="r">CLB latest</th><th>CLB last run</th><th class="r">Final interviews in office</th><th>Coach on</th><th>People counted</th></tr></thead>
+        <tbody>${rows.map((x) => `<tr><td>${esc(x.r.Director)}</td><td>${esc(x.r['Agency owner'])}</td><td>${stPill(x.k)}</td><td class="r">${x.r['CLB latest score'] == null ? '' : fmt(x.r['CLB latest score'])}</td><td>${esc(x.r['CLB last run'] || '')}</td><td class="r ${x.fi ? '' : 'low'}">${x.offs.length ? x.fi : ''}</td><td>${esc(weakOf(x.r))}</td><td class="muted">${esc(x.r['Counted from'] || 'No runs found')}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">Nobody on the list for this view.</td></tr>'}</tbody></table></div>`;
+    }
+
+    const filtersHtml = `<div class="filters" id="filters">
+        <label>Corporate director<select id="f-dir"></select></label>
+        <label>Agency<select id="f-agency"></select></label>
+        <label>Refresh window<select id="f-win"><option value="3">3 months</option><option value="6">6 months</option><option value="12">1 year</option></select></label>
+        <button class="reset" id="f-reset" type="button">Show everyone</button></div>
+      <p class="scope" id="scope"></p>`;
+
+    let h = `${filtersHtml}
+      <nav class="tabs" role="tablist" aria-label="Dashboard views">
+        <button class="tab" role="tab" data-tab="overview" aria-selected="true">Overview<small>Who's ready and what to coach</small></button>
+        <button class="tab" role="tab" data-tab="clb" aria-selected="false">CLB Overviews<small>${fmt(ck.People)} presenters · ${fmt(ck['Reviews scored'])} reviews</small></button>
+        <button class="tab" role="tab" data-tab="fi" aria-selected="false">Final Interviews<small>${fmt(fk.People)} interviewers · ${fmt(fk['Reviews scored'])} reviews</small></button>
+        <a class="totop" href="#top">↑ Top</a>
+      </nav>
+      <section id="overview" role="tabpanel">
+      <div id="ov-ready"></div>
+      <div class="grid2" id="ov-themes"></div>
+      <div class="card sec fu" id="ov-follow"></div>
+      <details class="card sec fold" id="ov-owners"><summary><h3>Agency owner status</h3><span class="hint"><span class="hint-show">Show agency owners</span><span class="hint-hide">Hide</span></span></summary><div id="ov-owners-body"></div></details>
+      <h3 style="margin:26px 0 4px">Tool activity</h3>
+      <p class="take">${fmt(ov['Leaders using either tool'])} leaders have run the CLB Review or Final Interview Review tools, and ${fmt(ov['Leaders using both tools'])} have used both. CLB videos average <b>${fmt(ck['Average latest score'])}</b> on each presenter's latest video; final interviews average <b>${fmt(fk['Average latest score'])}</b> on each interviewer's latest recording.</p>
+      <p class="sub">Latest review in either log: ${esc(ov['Latest review date'])} · Scores are out of 100. This section shows the whole division.</p>
       <div class="tiles">
         ${tile('Leaders using the tools', fmt(ov['Leaders using either tool']), `${fmt(ov['Leaders using both tools'])} use both · ${fmt(ov['CLB only'])} CLB only · ${fmt(ov['Final interview only'])} interview only`)}
         ${tile('CLB reviews scored', fmt(ov['CLB reviews scored']), `${fmt(ck['Reviews last 7 days'])} in the last 7 days, ${fmt(ck['Reviews prior 7 days'])} the 7 days before`)}
@@ -398,39 +583,36 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       </div>
       <div class="card sec"><h3>Reviews per week</h3><p class="desc">Scored reviews from each tool by the week they ran (weeks start Monday).</p><div class="chart" id="weekly"></div>
         <div class="legend"><span style="--sw:var(--blue)">CLB overview</span><span style="--sw:var(--green)">Final interview</span></div></div>
-      <details class="card sec fold" id="leaders"><summary><h3>By leader: who has run each tool</h3><span class="hint"><span class="hint-show">Show ${T.leaders.length} leaders</span><span class="hint-hide">Hide</span></span></summary>
+      <details class="card sec fold" id="leaders"><summary><h3>By leader: who has run each tool</h3><span class="hint"><span class="hint-show">Show leaders</span><span class="hint-hide">Hide</span></span></summary>
         <p class="desc">How many times each leader has run each tool and their latest result. CLB runs include runs scored on an earlier rubric. Leaders who use both come first.</p>
         <input class="search" type="search" placeholder="Search by name, office or agency" data-filter="leaders-table">
         <div id="leaders-table">${table([{ h: 'Leader', k: 'Leader' }, { h: 'Office', k: 'Office' }, { h: 'Agency', k: 'Agency' }, { h: 'CLB runs', k: 'CLB reviews', num: 1 }, { h: 'CLB latest', k: 'CLB latest score', num: 1 },
           { h: 'CLB result', f: (r) => pill(r['CLB latest result'], tier(r['CLB latest result'])) }, { h: 'Interview runs', k: 'Final interview reviews', num: 1 }, { h: 'Interview latest', k: 'Final interview latest score', num: 1 },
           { h: 'Interview result', f: (r) => pill(r['Final interview latest result'], tier(r['Final interview latest result'])) }, { h: 'Tools used', k: 'Tools used' }, { h: 'Last review', k: 'Last review' }], T.leaders, { scroll: 1 })}</div>
       </details>
-      ${T.directors && T.roster ? `<details class="card sec fold" id="directors"><summary><h3>By director: which agency owners have used each tool</h3><span class="hint"><span class="hint-show">Show ${T.directors.length} directors</span><span class="hint-hide">Hide</span></span></summary>
-        <p class="desc">Agency owners on each director's list and whether their agency has run a CLB, a final interview, both or neither. Partnerships count their parent agency's runs. CLB runs include earlier-rubric runs.</p>
-        ${table([{ h: 'Director', k: 'Director' }, { h: 'Agency owners', k: 'Agency owners', num: 1 }, { h: 'With a CLB', k: 'With a CLB', num: 1 }, { h: 'With a final interview', k: 'With a final interview', num: 1 },
+      ${T.directors && T.roster ? `<details class="card sec fold" id="directors"><summary><h3>By corporate director: which agency owners have used each tool</h3><span class="hint"><span class="hint-show">Show ${T.directors.length} corporate directors</span><span class="hint-hide">Hide</span></span></summary>
+        <p class="desc">Agency owners on each corporate director's list and whether their agency has run a CLB, a final interview, both or neither. Partnerships count their parent agency's runs. CLB runs include earlier-rubric runs.</p>
+        ${table([{ h: 'Corporate director', k: 'Director' }, { h: 'Agency owners', k: 'Agency owners', num: 1 }, { h: 'With a CLB', k: 'With a CLB', num: 1 }, { h: 'With a final interview', k: 'With a final interview', num: 1 },
           { h: 'Both', k: 'With both', num: 1 }, { h: 'Neither yet', k: 'Neither yet', num: 1 }, { h: 'Coverage (%)', k: 'Coverage (%)', num: 1 }, { h: 'Last run', k: 'Last run' }], T.directors, { scroll: 1 })}
         <h3 style="margin-top:18px">Agency owners</h3>
-        <input class="search" type="search" placeholder="Search by director or agency owner" data-filter="roster-table">
-        <div id="roster-table">${table([{ h: 'Director', k: 'Director' }, { h: 'Agency owner', k: 'Agency owner' }, { h: 'Status', k: 'Status' }, { h: 'CLB runs', k: 'CLB runs', num: 1 }, { h: 'CLB latest', k: 'CLB latest score', num: 1 },
+        <input class="search" type="search" placeholder="Search by corporate director or agency owner" data-filter="roster-table">
+        <div id="roster-table">${table([{ h: 'Corporate director', k: 'Director' }, { h: 'Agency owner', k: 'Agency owner' }, { h: 'Status', k: 'Status' }, { h: 'CLB runs', k: 'CLB runs', num: 1 }, { h: 'CLB latest', k: 'CLB latest score', num: 1 },
           { h: 'CLB last run', k: 'CLB last run' }, { h: 'Interview runs', k: 'Final interview runs', num: 1 }, { h: 'Interview latest', k: 'Final interview latest score', num: 1 }, { h: 'Interview last run', k: 'Final interview last run' }, { h: 'Counted from', k: 'Counted from' }], T.roster, { scroll: 1 })}</div>
-        ${(T.roster_unmatched || []).length ? `<p class="desc" style="margin-top:12px">Not yet on a director's list: ${T.roster_unmatched.map((r) => esc(r.Person) + ' (' + esc(r.Tool) + ')').join(', ')}.</p>` : ''}
+        ${(T.roster_unmatched || []).length ? `<p class="desc" style="margin-top:12px">Not yet on a corporate director's list: ${T.roster_unmatched.map((r) => esc(r.Person) + ' (' + esc(r.Tool) + ')').join(', ')}.</p>` : ''}
       </details>` : ''}
-      <nav class="tabs" role="tablist" aria-label="Recruiting tools">
-        <button class="tab" role="tab" data-tab="clb" aria-selected="true">CLB Overviews<small>${fmt(ck.People)} presenters · ${fmt(ck['Reviews scored'])} reviews</small></button>
-        <button class="tab" role="tab" data-tab="fi" aria-selected="false">Final Interviews<small>${fmt(fk.People)} interviewers · ${fmt(fk['Reviews scored'])} reviews</small></button>
-        <a class="totop" href="#top">↑ Top</a>
-      </nav>
-      <section id="clb" role="tabpanel">${toolPanel(T, 'clb', clbCfg)}</section>
-      <section id="fi" role="tabpanel" hidden>${toolPanel(T, 'fi', fiCfg)}</section>
+      </section>
+      <section id="clb" role="tabpanel" hidden><div id="clb-top"></div>${toolPanel(T, 'clb', clbCfg)}</section>
+      <section id="fi" role="tabpanel" hidden><div id="fi-top"></div>${toolPanel(T, 'fi', fiCfg)}</section>
       <details class="card fold" id="notes"><summary><h3>Data notes: name groupings and things to check</h3><span class="hint"><span class="hint-show">Show</span><span class="hint-hide">Hide</span></span></summary>
         ${table([{ h: 'Tool', k: 'Tool' }, { h: 'Topic', k: 'Topic' }, { h: 'Detail', k: 'Detail' }, { h: 'How it\'s handled', k: 'Handling' }], T.checks)}</details>`;
     $('#app').innerHTML = h;
 
+    const PANELS = ['overview', 'clb', 'fi'];
     const draw = () => {
       const wk = $('#weekly'); if (wk && wk.offsetParent) weekChart(wk, T.weekly);
       [['clb', clbCfg], ['fi', fiCfg]].forEach(([k, cfg]) => {
         const sc = $(`#${k}-score`); if (!sc || !sc.offsetParent) return;
-        const rows = T[k + '_people'].filter((r) => r['Latest score'] != null).sort((a, b) => b['Latest score'] - a['Latest score']);
+        const rows = T[k + '_people'].filter((r) => r['Latest score'] != null && S.match(r)).sort((a, b) => b['Latest score'] - a['Latest score']);
         hbar(sc, rows, { label: (d) => d.Person, value: (d) => d['Latest score'], max: 100, color: (d) => tierColor(d['Latest result']), maxLeft: 0.42, rowH: 21,
           refs: [{ v: FIX, label: '60', c: '#9AA5B1' }, { v: STRONG, label: '75', c: 'var(--green)' }], aria: `Latest score by ${cfg.whoOne}`,
           tip: (d) => [`${d.Person}: ${fmt(d['Latest score'])}`, d['Latest result'], [d.Role, d.Agency, d.Office].filter(Boolean).join(' · '), `Latest review ${d['Latest date']} · ${d.Reviews} review${d.Reviews === 1 ? '' : 's'}`] });
@@ -442,33 +624,82 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       });
     };
 
-    // tabs, with #clb / #fi links
+    // search boxes filter table rows, on top of the director and agency filter
+    const applySearch = (inp) => {
+      const q = inp.value.trim().toLowerCase();
+      document.querySelectorAll(`#${inp.dataset.filter} tbody tr`).forEach((tr) => { tr.hidden = tr.dataset.out === '1' || (!!q && !tr.textContent.toLowerCase().includes(q)); });
+    };
+    document.querySelectorAll('input[data-filter]').forEach((inp) => inp.addEventListener('input', () => applySearch(inp)));
+
+    function fillSelects() {
+      $('#f-dir').innerHTML = `<option value="">All corporate directors</option>` + dirs.map((d) => `<option value="${esc(d)}"${d === F.dir ? ' selected' : ''}>${esc(d)}</option>`).join('');
+      const ags = F.dir ? [...new Set(owners.filter((r) => r.Director === F.dir).flatMap((r) => r.people.map(agencyOf)).filter(Boolean))].sort() : allAgencies;
+      if (F.agency && !ags.includes(F.agency)) F.agency = '';
+      $('#f-agency').innerHTML = `<option value="">${F.dir ? 'All of their agencies' : 'All agencies'}</option>` + ags.map((a) => `<option value="${esc(a)}"${a === F.agency ? ' selected' : ''}>${esc(a)}</option>`).join('');
+      $('#f-win').value = String(F.win);
+      $('#f-reset').hidden = !F.dir && !F.agency;
+    }
+    function paint() {
+      S = makeScope();
+      fillSelects();
+      $('#scope').textContent = S.all ? `Showing the whole Liberty National Division: ${owners.length} agency owners across ${dirs.length} corporate directors.`
+        : `Showing ${[F.dir && 'corporate director ' + F.dir, F.agency].filter(Boolean).join(', ')}: ${S.owners.length} agency owner${S.owners.length === 1 ? '' : 's'} on the list. Tables and charts below follow this filter except rubric averages, flags and tool activity.`;
+      $('#ov-ready').innerHTML = readiness(true);
+      $('#ov-themes').innerHTML = themeCard('clb', 'Coach this first: CLB', 'presenters', 3) + themeCard('fi', 'Coach this first: final interviews', 'interviewers', 3);
+      $('#ov-follow').innerHTML = followUp();
+      $('#ov-owners-body').innerHTML = ownersTable();
+      if (!S.all) $('#ov-owners').open = true;
+      $('#clb-top').innerHTML = readiness(false) + `<div class="sec">${themeCard('clb', 'What to coach on CLB videos', 'presenters', 6)}</div>`;
+      $('#fi-top').innerHTML = officesCard() + `<div class="sec">${themeCard('fi', 'What to coach on final interviews', 'interviewers', 6)}</div>`;
+      const inOwners = new Set(S.owners);
+      [['clb-people', T.clb_people, S.match], ['clb-reviews', T.clb_reviews, S.match], ['fi-people', T.fi_people, S.match], ['fi-reviews', T.fi_reviews, S.match],
+        ['leaders-table', T.leaders, S.match], ['roster-table', owners, (r) => inOwners.has(r)]].forEach(([id, rows, fn]) => {
+        document.querySelectorAll(`#${id} tbody tr`).forEach((tr, i) => { tr.dataset.out = rows[i] && !fn(rows[i]) ? '1' : ''; });
+      });
+      document.querySelectorAll('input[data-filter]').forEach(applySearch);
+      draw();
+    }
+    $('#f-dir').addEventListener('change', (e) => { F.dir = e.target.value; paint(); });
+    $('#f-agency').addEventListener('change', (e) => { F.agency = e.target.value; paint(); });
+    $('#f-win').addEventListener('change', (e) => { F.win = +e.target.value; ls.set('rpd-window', String(F.win)); paint(); });
+    $('#f-reset').addEventListener('click', () => { F.dir = ''; F.agency = ''; paint(); });
+
+    // tabs, with #overview / #clb / #fi links; the last tab used is remembered
     const show = (id, scroll) => {
       document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-selected', b.dataset.tab === id ? 'true' : 'false'));
-      ['clb', 'fi'].forEach((p) => { $('#' + p).hidden = p !== id; });
+      PANELS.forEach((p) => { $('#' + p).hidden = p !== id; });
+      ls.set('rpd-tab', id);
       if (location.hash !== '#' + id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} }
       draw();
       const bar = $('.tabs');
       if (scroll && bar.getBoundingClientRect().top < 0) bar.scrollIntoView({ block: 'start' });
     };
     document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => show(b.dataset.tab, true)));
-    const fromHash = () => { const hsh = location.hash.replace('#', ''); if (hsh === 'clb' || hsh === 'fi') show(hsh, false); };
+    document.addEventListener('click', (ev) => {
+      const g = ev.target.closest('.go-btn');
+      if (g) {
+        show(g.dataset.tool, false);
+        const inp = $(`input[data-filter="${g.dataset.tool}-reviews"]`);
+        inp.value = g.dataset.who; applySearch(inp);
+        inp.scrollIntoView({ block: 'start', behavior: 'smooth' });
+        return;
+      }
+      const d = ev.target.closest('.go-dir');
+      if (d) { F.dir = d.dataset.dir; F.agency = ''; paint(); $('#filters').scrollIntoView({ block: 'start', behavior: 'smooth' }); }
+    });
+    const fromHash = () => { const hsh = location.hash.replace('#', ''); if (PANELS.includes(hsh)) show(hsh, false); };
     window.addEventListener('hashchange', fromHash);
-    fromHash();
 
-    // search boxes filter table rows
-    document.querySelectorAll('input[data-filter]').forEach((inp) => inp.addEventListener('input', () => {
-      const q = inp.value.trim().toLowerCase();
-      document.querySelectorAll(`#${inp.dataset.filter} tbody tr`).forEach((tr) => { tr.hidden = q && !tr.textContent.toLowerCase().includes(q); });
-    }));
-
-    draw();
+    paint();
+    const start = location.hash.replace('#', '');
+    show(PANELS.includes(start) ? start : (PANELS.includes(ls.get('rpd-tab')) ? ls.get('rpd-tab') : 'overview'), false);
     let w = window.innerWidth;
     window.addEventListener('resize', () => { if (Math.abs(window.innerWidth - w) > 20) { w = window.innerWidth; draw(); } });
     let before = null;
-    window.addEventListener('beforeprint', () => { before = ['clb', 'fi'].map((p) => $('#' + p).hidden); ['clb', 'fi'].forEach((p) => { $('#' + p).hidden = false; }); draw(); });
-    window.addEventListener('afterprint', () => { if (before) ['clb', 'fi'].forEach((p, i) => { $('#' + p).hidden = before[i]; }); before = null; });
+    window.addEventListener('beforeprint', () => { before = PANELS.map((p) => $('#' + p).hidden); PANELS.forEach((p) => { $('#' + p).hidden = false; }); draw(); });
+    window.addEventListener('afterprint', () => { if (before) PANELS.forEach((p, i) => { $('#' + p).hidden = before[i]; }); before = null; });
   }
+
 
   const fail = () => { $('#app').innerHTML = '<div class="status">The results couldn\'t be loaded. Try refreshing the page.</div>'; };
   async function openDashboard() {
