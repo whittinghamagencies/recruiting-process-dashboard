@@ -10,7 +10,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="brand/icon-192.png">
 <link rel="apple-touch-icon" href="brand/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#00558C">
+<meta name="theme-color" content="#0D0D0D">
 <meta name="apple-mobile-web-app-title" content="Recruiting Dashboard">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
@@ -26,12 +26,12 @@
 html { scroll-behavior: smooth; }
 body { margin:0; background:var(--bg); color:var(--fg); font-family:'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif; font-size:15px; line-height:1.45; }
 .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 20px 40px; }
-header.brand { display:flex; gap:12px; align-items:stretch; background:#fff; border-radius:14px; border-bottom:4px solid var(--blue); padding:14px 18px; margin-bottom:16px; box-shadow:0 2px 4px rgba(16,24,40,.06), 0 10px 26px rgba(0,85,140,.12); }
+header.brand { display:flex; gap:12px; align-items:stretch; background:#fff; border-radius:14px; border-bottom:4px solid #0D0D0D; padding:14px 18px; margin-bottom:16px; box-shadow:0 2px 4px rgba(16,24,40,.06), 0 10px 26px rgba(0,0,0,.12); }
 .powered { margin-left:auto; display:flex; flex-direction:column; align-items:flex-end; justify-content:center; gap:3px; font-size:11px; color:var(--muted); }
 .powered img { height:40px; width:auto; display:block; }
 @media (max-width:640px) { header.brand { flex-wrap:wrap; } .powered { margin-left:0; align-items:flex-start; } }
-header.brand .bar { width:7px; border-radius:3px; background:var(--green); }
-.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--blue); font-weight:700; }
+header.brand .bar { width:7px; border-radius:3px; background:#FFB612; }
+.eyebrow { font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#8A6200; font-weight:700; }
 h1 { font-family:'Source Serif 4', Georgia, serif; font-weight:600; font-size:30px; margin:2px 0 0; }
 .take { font-size:16px; margin:0 0 6px; max-width:80ch; }
 .sub { font-size:13px; color:var(--muted); margin:0 0 18px; }
@@ -77,11 +77,12 @@ details.fold > summary h3 { margin:0; }
 .hint { font-size:12.5px; color:var(--blue); border:1px solid var(--line); border-radius:999px; padding:2px 10px; white-space:nowrap; }
 details.fold[open] > summary { margin-bottom:10px; }
 details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-hide { display:none; }
-.tabs { display:flex; gap:10px; align-items:stretch; position:sticky; top:0; z-index:20; background:var(--bg); padding:10px 0; border-bottom:4px solid var(--blue); margin:22px 0 16px; }
+.tabs { display:flex; gap:10px; align-items:stretch; position:sticky; top:0; z-index:20; background:var(--bg); padding:10px 0; border-bottom:4px solid #0D0D0D; margin:22px 0 16px; }
 .tab { flex:1 1 0; font:inherit; font-size:18px; font-weight:700; padding:14px 12px; border:1px solid var(--line); border-radius:var(--radius); background:var(--panel); color:var(--fg); cursor:pointer; }
-.tab:hover { border-color:var(--blue); }
+.tab:hover { border-color:#FFB612; }
 .tab { box-shadow:0 1px 2px rgba(16,24,40,.05), 0 3px 10px rgba(16,24,40,.06); }
-.tab[aria-selected="true"] { background:var(--blue); color:#fff; border-color:var(--blue); box-shadow:0 2px 4px rgba(0,85,140,.25), 0 8px 20px rgba(0,85,140,.28); }
+.tab[aria-selected="true"] { background:#0D0D0D; color:#FFB612; border-color:#0D0D0D; box-shadow:0 2px 4px rgba(0,0,0,.25), 0 8px 20px rgba(0,0,0,.25); }
+.tab[aria-selected="true"] small { color:#fff; }
 .filters { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:0 0 4px; }
 .filters label { font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:3px; }
 .filters select { font:inherit; font-size:14px; padding:7px 10px; border:1px solid var(--line); border-radius:8px; background:#fff; min-width:200px; box-shadow:0 1px 2px rgba(16,24,40,.05); }
@@ -140,10 +141,10 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
   <header class="brand" id="top">
     <div class="bar"></div>
     <div>
-      <div class="eyebrow">Globe Life Liberty National Division · The Whittingham Agencies</div>
+      <div class="eyebrow">Whittingham Professional Training Services · for Globe Life Liberty National Division</div>
       <h1>Recruiting Process Dashboard</h1>
     </div>
-    <div class="powered"><span>Powered by</span><img src="brand/wpts-logo.png" alt="Whittingham Professional Training Services"></div>
+    <div class="powered"><img src="brand/wpts-logo.png" alt="Whittingham Professional Training Services"></div>
   </header>
 
   <div id="app"><div class="status">Loading the latest results…</div></div>
@@ -226,7 +227,10 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
     try {
       const res = await fetch('cards/' + encodeURIComponent(id) + '.json', { cache: 'no-store' });
       if (!res.ok) throw new Error(res.status);
-      const html = await decrypt(await res.json(), KEY);
+      // Scorecards show WPTS branding here; an agency named on a run stays as it was entered.
+      const html = (await decrypt(await res.json(), KEY))
+        .replace(/Globe Life Liberty National Division, The Whittingham Agencies/g, 'Globe Life Liberty National Division')
+        .replace(/The Whittingham Agencies/g, 'Whittingham Professional Training Services');
       $('#sc-body').innerHTML = `<div class="sc-card">${html}</div>`;
       $('#sc-body').scrollTop = 0;
       $('#sc-print').hidden = false;
