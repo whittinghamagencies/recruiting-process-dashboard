@@ -535,12 +535,18 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       const notOwn = S.owners.filter((r) => r['Owner ran a final'] !== 'Yes' && r['Final interview runs'] > 0);
       const group = (k) => rows.filter((r) => r.Who === k);
       const tbl = (list) => list.length ? `<div class="tablewrap"><table><thead><tr><th>Person</th><th>Role as entered</th><th>Agency owner</th><th>Corporate director</th><th class="r">Runs</th><th class="r">Latest score</th><th>Latest</th></tr></thead><tbody>${list.map((r) => `<tr><td><button class="go-btn" type="button" data-tool="fi" data-who="${esc(r.Person)}">${esc(r.Person)}</button></td><td>${esc(r['Role as entered'])}</td><td>${esc(r['Agency owner'] || 'Not on the list yet')}</td><td>${esc(r['Corporate director'])}</td><td class="r">${r.Runs}</td><td class="r">${fmt(r['Latest score'])}</td><td>${esc(r['Latest date'])}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None in view.</p>';
-      const ao = group('Agency owner'), ad = group('Agency director or other leader'), ho = group('Home office');
+      const ao = group('Agency owner'), ad = rows.filter((r) => /agency director/i.test(r.Who) && r.Who !== 'Agency owner'), ol = group('Other leader'), ho = group('Home office');
+      const ownersIn = new Set(S.owners.map((r) => r['Agency owner']));
+      const adList = (T.agency_directors || []).filter((r) => S.all || ownersIn.has(r['Agency owner']));
+      const adRan = adList.filter((r) => r['Final interviews'] > 0);
+      const adTbl = `<div class="tablewrap scroll"><table><thead><tr><th>Name</th><th>Role</th><th>Agency owner</th><th>Corporate director</th><th class="r">Final interviews</th><th class="r">Latest score</th><th>Latest</th></tr></thead><tbody>${adList.map((r) => `<tr><td>${r.Person ? `<button class="go-btn" type="button" data-tool="fi" data-who="${esc(r.Person)}">${esc(r.Name)}</button>` : esc(r.Name)}</td><td>${esc(r.Role)}</td><td>${esc(r['Agency owner'])}</td><td>${esc(r['Corporate director'])}</td><td class="r ${r['Final interviews'] ? '' : 'low'}">${r['Final interviews']}</td><td class="r">${r['Latest score'] == null ? '' : fmt(r['Latest score'])}</td><td>${esc(r['Latest date'])}</td></tr>`).join('')}</tbody></table></div>`;
       return `<div class="card sec"><h3>Who's running final interviews</h3>
         <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px"><span class="big" style="font-family:'Source Serif 4',Georgia,serif;font-size:34px">${own} of ${n}</span><span class="lead">agency owners have run a final interview through the tool themselves</span></div>
         <p class="desc">${notOwn.length ? `${notOwn.length} more ${notOwn.length === 1 ? 'agency has' : 'agencies have'} had one run by someone else in the agency: ${notOwn.map((r) => esc(r['Agency owner'])).join(', ')}.` : ''} "Role as entered" is what the person picked on the upload page.</p>
         <h3 style="margin-top:14px">Agency owners who ran their own (${ao.length})</h3>${tbl(ao)}
-        <h3 style="margin-top:14px">Agency directors and other leaders (${ad.length})</h3><p class="desc">Who ran a final for each agency. Once the agency director list is in, these will be labeled by their actual role.</p>${tbl(ad)}
+        <h3 style="margin-top:14px">Agency directors and RADs (${ad.length})</h3><p class="desc">Matched to the agency director list from Liberty National.</p>${tbl(ad)}
+        ${ol.length ? `<h3 style="margin-top:14px">Other leaders (${ol.length})</h3><p class="desc">Not on the agency director list.</p>${tbl(ol)}` : ''}
+        ${adList.length ? `<details class="fold" style="margin-top:16px"><summary><h3>Agency directors and RADs: ${adRan.length} of ${adList.length} have run a final</h3><span class="hint"><span class="hint-show">Show the full list</span><span class="hint-hide">Hide</span></span></summary><p class="desc">Everyone on the agency director list for the agency owners in view, those who've run a final first.</p><input class="search" type="search" placeholder="Search by name or agency owner" data-filter="ad-list">${adTbl.replace('<div class="tablewrap scroll">', '<div class="tablewrap scroll" id="ad-list">')}</details>` : ''}
         ${ho.length ? `<h3 style="margin-top:14px">Home office (${ho.length})</h3>${tbl(ho)}` : ''}</div>`;
     }
 
@@ -655,7 +661,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       const q = inp.value.trim().toLowerCase();
       document.querySelectorAll(`#${inp.dataset.filter} tbody tr`).forEach((tr) => { tr.hidden = tr.dataset.out === '1' || (!!q && !tr.textContent.toLowerCase().includes(q)); });
     };
-    document.querySelectorAll('input[data-filter]').forEach((inp) => inp.addEventListener('input', () => applySearch(inp)));
+    document.addEventListener('input', (e) => { if (e.target.matches && e.target.matches('input[data-filter]')) applySearch(e.target); });
 
     function fillSelects() {
       $('#f-dir').innerHTML = `<option value="">All corporate directors</option>` + dirs.map((d) => `<option value="${esc(d)}"${d === F.dir ? ' selected' : ''}>${esc(d)}</option>`).join('');
