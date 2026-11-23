@@ -515,17 +515,17 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
         <div class="stack" role="img" aria-label="${KEYS.map((k) => `${ST[k]} ${st[k]}`).join(', ')}">${KEYS.map((k) => st[k] ? `<div title="${ST[k]}: ${st[k]}" style="width:${100 * st[k] / n}%;background:${SC[k]}"></div>` : '').join('')}</div>
         <div class="legend">${KEYS.map((k) => `<span style="--sw:${SC[k]}">${ST[k]} ${st[k]}</span>`).join('')}</div>`;
       if (withFinals) {
-        const o = fiOffices();
-        h += `<div class="mini"><div><b>${o.ran.length} of ${o.total}</b><span>offices have had a final interview reviewed</span></div>
-          <div><b class="${o.none.length ? 'low' : ''}">${o.none.length}</b><span>offices with no final interview reviewed yet</span></div>
+        const o = fiOffices(), withFi = S.owners.filter((r) => r['Final interview runs'] > 0).length;
+        h += `<div class="mini"><div><b>${withFi} of ${n}</b><span>agency owners with a final interview reviewed in their agency</span></div>
+          <div><b class="${n - withFi ? 'low' : ''}">${n - withFi}</b><span>agency owners with no final interview reviewed yet</span></div>
           <div><b>${o.ran.reduce((a, e) => a + e.n, 0)}</b><span>people who've had a final interview reviewed</span></div></div>`;
       }
       return h + '</div>';
     }
     function officesCard() {
-      const o = fiOffices();
-      return `<div class="card sec hero"><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${o.ran.length} of ${o.total}</span><span class="lead">offices have had at least one final interview reviewed</span></div>
-        <p class="desc" style="margin-top:8px">The number is how many people in each office have had a final interview reviewed. One person is enough to count the office.</p>
+      const o = fiOffices(), n = S.owners.length, withFi = S.owners.filter((r) => r['Final interview runs'] > 0).length;
+      return `<div class="card sec hero"><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${withFi} of ${n}</span><span class="lead">agency owners have had at least one final interview reviewed in their agency</span></div>
+        <p class="desc" style="margin-top:8px">Anyone in the agency running one counts. Below, by office as typed on each run: how many people there have had a final interview reviewed.</p>
         <div class="chips">${o.ran.map((e) => `<span class="chip" title="Latest ${esc(e.last)}">${esc(e.office)} · ${e.n}</span>`).join('')}${o.none.map((x) => `<span class="chip none">${esc(x)} · 0</span>`).join('')}</div></div>`;
     }
 
@@ -534,17 +534,17 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       const by = new Map();
       S.owners.forEach((r) => {
         const e = by.get(r.Director) || { d: r.Director, n: 0, never: 0, work: 0, due: 0, current: 0, noFi: new Set() };
-        e.n++; e[clbStatus(r)]++;
+        e.n++; e[clbStatus(r)]++; if (!(r['Final interview runs'] > 0)) e.noFiOwners = (e.noFiOwners || 0) + 1;
         r.people.forEach((p) => { const o = officeOf(p); if (o && !fiO.has(o)) e.noFi.add(o); });
         by.set(r.Director, e);
       });
-      const rows = [...by.values()].map((e) => ({ ...e, gap: e.never * 3 + e.work * 2 + e.due + e.noFi.size * 2 })).sort((a, b) => b.gap - a.gap || a.d.localeCompare(b.d));
+      const rows = [...by.values()].map((e) => ({ ...e, gap: e.never * 3 + e.work * 2 + e.due + (e.noFiOwners || 0) * 2 })).sort((a, b) => b.gap - a.gap || a.d.localeCompare(b.d));
       const top = S.all ? rows.filter((r) => r.gap > 0).slice(0, 6) : rows;
       const hot = (v) => `<td class="r ${v ? 'hot' : ''}">${v}</td>`;
       return `<h3>${S.all ? 'Corporate directors needing follow-up' : 'Corporate director accountability'}</h3>
         <p class="desc">${S.all ? `The ${top.length} corporate directors with the biggest gaps, worst first. The full list is under "By corporate director" below.` : 'Agency owners on this corporate director\'s list and where they stand.'}</p>
-        <div class="tablewrap"><table><thead><tr><th>Corporate director</th><th class="r">Agency owners</th><th class="r">Current CLB</th><th class="r">Never ran CLB</th><th class="r">CLB under ${STRONG}</th><th class="r">Due for refresh</th><th>Offices with no final interview</th></tr></thead>
-        <tbody>${top.map((e) => `<tr><td><button class="go-dir" type="button" data-dir="${esc(e.d)}">${esc(e.d)}</button></td><td class="r">${e.n}</td><td class="r">${e.current}</td>${hot(e.never)}${hot(e.work)}<td class="r">${e.due}</td><td class="${e.noFi.size ? 'hot' : ''}">${e.noFi.size ? esc([...e.noFi].sort().join(', ')) : 'None'}</td></tr>`).join('') || '<tr><td colspan="7" class="muted">Nothing needs follow-up right now.</td></tr>'}</tbody></table></div>`;
+        <div class="tablewrap"><table><thead><tr><th>Corporate director</th><th class="r">Agency owners</th><th class="r">Current CLB</th><th class="r">Never ran CLB</th><th class="r">CLB under ${STRONG}</th><th class="r">Due for refresh</th><th class="r">No final interview yet</th></tr></thead>
+        <tbody>${top.map((e) => `<tr><td><button class="go-dir" type="button" data-dir="${esc(e.d)}">${esc(e.d)}</button></td><td class="r">${e.n}</td><td class="r">${e.current}</td>${hot(e.never)}${hot(e.work)}<td class="r">${e.due}</td>${hot(e.noFiOwners || 0)}</tr>`).join('') || '<tr><td colspan="7" class="muted">Nothing needs follow-up right now.</td></tr>'}</tbody></table></div>`;
     }
     function weakOf(r) {
       const all = [];
@@ -557,9 +557,9 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       const order = { never: 0, work: 1, due: 2, current: 3 };
       const rows = S.owners.map((r) => { const offs = [...new Set(r.people.map(officeOf).filter(Boolean))]; return { r, k: clbStatus(r), fi: offs.reduce((a, o) => a + (fiO.get(o) || 0), 0), offs }; })
         .sort((a, b) => order[a.k] - order[b.k] || a.r.Director.localeCompare(b.r.Director));
-      return `<p class="desc">Each agency owner on the list: CLB status, whether anyone in their office has had a final interview reviewed, and the top two things to coach from their latest CLB.</p>
-        <div class="tablewrap scroll"><table><thead><tr><th>Corporate director</th><th>Agency owner</th><th>CLB status</th><th class="r">CLB latest</th><th>CLB last run</th><th class="r">Final interviews in office</th><th>Coach on</th><th>People counted</th></tr></thead>
-        <tbody>${rows.map((x) => `<tr><td>${esc(x.r.Director)}</td><td>${esc(x.r['Agency owner'])}</td><td>${stPill(x.k)}</td><td class="r">${x.r['CLB latest score'] == null ? '' : fmt(x.r['CLB latest score'])}</td><td>${esc(x.r['CLB last run'] || '')}</td><td class="r ${x.fi ? '' : 'low'}">${x.offs.length ? x.fi : ''}</td><td>${esc(weakOf(x.r))}</td><td class="muted">${esc(x.r['Counted from'] || 'No runs found')}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">Nobody on the list for this view.</td></tr>'}</tbody></table></div>`;
+      return `<p class="desc">Each agency owner on the list: CLB status, how many final interviews their agency has had reviewed, and the top two things to coach from their latest CLB.</p>
+        <div class="tablewrap scroll"><table><thead><tr><th>Corporate director</th><th>Agency owner</th><th>CLB status</th><th class="r">CLB latest</th><th>CLB last run</th><th class="r">Final interviews in agency</th><th>Coach on</th><th>People counted</th></tr></thead>
+        <tbody>${rows.map((x) => `<tr><td>${esc(x.r.Director)}</td><td>${esc(x.r['Agency owner'])}</td><td>${stPill(x.k)}</td><td class="r">${x.r['CLB latest score'] == null ? '' : fmt(x.r['CLB latest score'])}</td><td>${esc(x.r['CLB last run'] || '')}</td><td class="r ${x.r['Final interview runs'] ? '' : 'low'}">${x.r['Final interview runs'] || 0}</td><td>${esc(weakOf(x.r))}</td><td class="muted">${esc(x.r['Counted from'] || 'No runs found')}</td></tr>`).join('') || '<tr><td colspan="8" class="muted">Nobody on the list for this view.</td></tr>'}</tbody></table></div>`;
     }
 
     const filtersHtml = `<div class="filters" id="filters">
