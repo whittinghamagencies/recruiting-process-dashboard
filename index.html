@@ -518,7 +518,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
         const o = fiOffices(), withFi = S.owners.filter((r) => r['Final interview runs'] > 0).length;
         h += `<div class="mini"><div><b>${withFi} of ${n}</b><span>agency owners with a final interview reviewed in their agency</span></div>
           <div><b class="${n - withFi ? 'low' : ''}">${n - withFi}</b><span>agency owners with no final interview reviewed yet</span></div>
-          <div><b>${o.ran.reduce((a, e) => a + e.n, 0)}</b><span>people who've had a final interview reviewed</span></div></div>`;
+          <div><b>${S.owners.filter((r) => r['Owner ran a final'] === 'Yes').length} of ${n}</b><span>agency owners have run one through the tool themselves</span></div></div>`;
       }
       return h + '</div>';
     }
@@ -527,6 +527,21 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       return `<div class="card sec hero"><div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap"><span class="big">${withFi} of ${n}</span><span class="lead">agency owners have had at least one final interview reviewed in their agency</span></div>
         <p class="desc" style="margin-top:8px">Anyone in the agency running one counts. Below, by office as typed on each run: how many people there have had a final interview reviewed.</p>
         <div class="chips">${o.ran.map((e) => `<span class="chip" title="Latest ${esc(e.last)}">${esc(e.office)} · ${e.n}</span>`).join('')}${o.none.map((x) => `<span class="chip none">${esc(x)} · 0</span>`).join('')}</div></div>`;
+    }
+
+    function whoCard() {
+      const rows = (T.fi_who || []).filter((r) => S.match(r));
+      const own = S.owners.filter((r) => r['Owner ran a final'] === 'Yes').length, n = S.owners.length;
+      const notOwn = S.owners.filter((r) => r['Owner ran a final'] !== 'Yes' && r['Final interview runs'] > 0);
+      const group = (k) => rows.filter((r) => r.Who === k);
+      const tbl = (list) => list.length ? `<div class="tablewrap"><table><thead><tr><th>Person</th><th>Role as entered</th><th>Agency owner</th><th>Corporate director</th><th class="r">Runs</th><th class="r">Latest score</th><th>Latest</th></tr></thead><tbody>${list.map((r) => `<tr><td><button class="go-btn" type="button" data-tool="fi" data-who="${esc(r.Person)}">${esc(r.Person)}</button></td><td>${esc(r['Role as entered'])}</td><td>${esc(r['Agency owner'] || 'Not on the list yet')}</td><td>${esc(r['Corporate director'])}</td><td class="r">${r.Runs}</td><td class="r">${fmt(r['Latest score'])}</td><td>${esc(r['Latest date'])}</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">None in view.</p>';
+      const ao = group('Agency owner'), ad = group('Agency director or other leader'), ho = group('Home office');
+      return `<div class="card sec"><h3>Who's running final interviews</h3>
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:6px 0 4px"><span class="big" style="font-family:'Source Serif 4',Georgia,serif;font-size:34px">${own} of ${n}</span><span class="lead">agency owners have run a final interview through the tool themselves</span></div>
+        <p class="desc">${notOwn.length ? `${notOwn.length} more ${notOwn.length === 1 ? 'agency has' : 'agencies have'} had one run by someone else in the agency: ${notOwn.map((r) => esc(r['Agency owner'])).join(', ')}.` : ''} "Role as entered" is what the person picked on the upload page.</p>
+        <h3 style="margin-top:14px">Agency owners who ran their own (${ao.length})</h3>${tbl(ao)}
+        <h3 style="margin-top:14px">Agency directors and other leaders (${ad.length})</h3><p class="desc">Who ran a final for each agency. Once the agency director list is in, these will be labeled by their actual role.</p>${tbl(ad)}
+        ${ho.length ? `<h3 style="margin-top:14px">Home office (${ho.length})</h3>${tbl(ho)}` : ''}</div>`;
     }
 
     function followUp() {
@@ -661,7 +676,7 @@ details.fold[open] .hint-show { display:none; } details.fold:not([open]) .hint-h
       $('#ov-owners-body').innerHTML = ownersTable();
       if (!S.all) $('#ov-owners').open = true;
       $('#clb-top').innerHTML = readiness(false) + `<div class="sec">${themeCard('clb', 'What to coach on CLB videos', 'presenters', 6)}</div>`;
-      $('#fi-top').innerHTML = officesCard() + `<div class="sec">${themeCard('fi', 'What to coach on final interviews', 'interviewers', 6)}</div>`;
+      $('#fi-top').innerHTML = officesCard() + whoCard() + `<div class="sec">${themeCard('fi', 'What to coach on final interviews', 'interviewers', 6)}</div>`;
       const inOwners = new Set(S.owners);
       [['clb-people', T.clb_people, S.match], ['clb-reviews', T.clb_reviews, S.match], ['fi-people', T.fi_people, S.match], ['fi-reviews', T.fi_reviews, S.match],
         ['leaders-table', T.leaders, S.match], ['roster-table', owners, (r) => inOwners.has(r)]].forEach(([id, rows, fn]) => {
